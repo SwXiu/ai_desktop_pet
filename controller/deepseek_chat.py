@@ -1,8 +1,9 @@
 from controller.ai_client_base import AIClientBase
 from utils.ai_caller import call_ai_api
 
-class GPTChat(AIClientBase):
-    def __init__(self, api_key: str, temperature: float = 0.7, personality_prompt: str = "", model_name="gpt-4o"):
+class DeepSeekChat(AIClientBase):
+    def __init__(self, api_url: str, api_key: str, temperature: float = 0.7, personality_prompt: str = "", model_name="deepseek-1"):
+        self.api_url = api_url
         self.api_key = api_key
         self.temperature = temperature
         self.personality_prompt = personality_prompt
@@ -27,7 +28,8 @@ class GPTChat(AIClientBase):
             messages=messages,
             model=self.model_name,
             temperature=self.temperature,
-            api_key=self.api_key
+            api_key=self.api_key,
+            api_url=self.api_url,
         )
 
         self.history.append({"role": "user", "content": message})

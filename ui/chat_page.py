@@ -1,8 +1,13 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextBrowser, QLineEdit, QPushButton, QHBoxLayout
+from model.chat_history import ChatHistory
+from controller.app_manager import AppManager
 
 class ChatPage(QWidget):
-    def __init__(self):
+    def __init__(self, app_manager: AppManager):
         super().__init__()
+
+        self.app_manager = app_manager
+        self.history = self.app_manager.memory_manager.chat_history
 
         self.layout = QVBoxLayout(self)
 
@@ -20,11 +25,24 @@ class ChatPage(QWidget):
 
         self.layout.addLayout(input_layout)
 
+        self.load_history()
+
+    def load_history(self):
+        for item in self.history.get_all():
+            role = "你" if item["role"] == "user" else "AI"
+            self.chat_display.append(f"<b>{role}：</b> {item['content']}")
+
     def send_message(self):
         user_text = self.input_edit.text().strip()
-        if user_text:
-            self.chat_display.append(f"<b>你：</b> {user_text}")
+        if not user_text:
+            return
 
-            self.chat_display.append(f"<b>AI：</b> 我收到了你的消息：{user_text}")
+        self.chat_display.append(f"<b>你：</b> {user_text}")
+        self.history.append("user", user_text)
 
-            self.input_edit.clear()
+        reply = self.app_manager.chat(user_text)
+
+        self.chat_display.append(f"<b>AI：</b> {reply}")
+        self.history.append("assistant", reply)
+
+        self.input_edit.clear()

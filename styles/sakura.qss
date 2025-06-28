@@ -1,0 +1,11 @@
+QLineEdit, QTextEdit {
+    color: #313131;
+}
+
+QLineEdit:focus, QTextEdit:focus {
+    color: #313131;
+}
+
+QLineEdit::placeholder, QTextEdit::placeholder {
+    color: #888888;
+}
